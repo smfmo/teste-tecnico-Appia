@@ -48,7 +48,7 @@ public class IncidentService {
         repository.save(incident);
     }
 
-    public Optional<Incident> getIncident(UUID id) {
+    public Optional<Incident> getIncidentById(UUID id) {
         return repository.findById(id);
     }
 }

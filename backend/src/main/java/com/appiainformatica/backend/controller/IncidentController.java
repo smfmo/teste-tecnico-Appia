@@ -48,7 +48,7 @@ public class IncidentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<IncidentResponseDTO>> getIncidentById(@PathVariable("id") UUID id) {
-        Optional<Incident> response = service.getIncident(id);
+        Optional<Incident> response = service.getIncidentById(id);
         Optional<IncidentResponseDTO> result = response.map(mapper::toDto);
         return ResponseEntity.ok(result);
     }
