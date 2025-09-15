@@ -9,6 +9,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.UUID;
+
 import static com.appiainformatica.backend.repository.specs.IncidentSpecs.*;
 
 @Service
@@ -42,5 +46,9 @@ public class IncidentService {
 
     public void saveIncident(Incident incident) {
         repository.save(incident);
+    }
+
+    public Optional<Incident> getIncident(UUID id) {
+        return repository.findById(id);
     }
 }
