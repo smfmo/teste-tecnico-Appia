@@ -4,10 +4,11 @@ import com.appiainformatica.backend.model.Incident;
 import com.appiainformatica.backend.model.enums.Priority;
 import com.appiainformatica.backend.model.enums.Status;
 import com.appiainformatica.backend.repository.IncidentRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.UUID;
 import static com.appiainformatica.backend.repository.specs.IncidentSpecs.*;
 
 @Service
@@ -19,15 +20,12 @@ public class IncidentService {
         this.repository = repository;
     }
 
-    public Incident saveIncident(Incident incident) {
-        return repository.save(incident);
-    }
-
-    public List<Incident> getIncidentsPerFilter(Status status, Priority priority, String q){
+    public Page<Incident> getIncidentsPerFilter(
+            Status status, Priority priority, String q,
+            Integer page, Integer pageSize){
 
         Specification<Incident> specs = Specification
                 .allOf((root, query, cb) -> cb.conjunction());
-
         if (status != null) {
             specs = specs.and(statusEqual(status));
         }
@@ -37,7 +35,12 @@ public class IncidentService {
         if (q != null){
             specs = specs.and(titleOrDescriptionContains(q));
         }
-        return repository.findAll(specs);
+
+        Pageable pageRequest = PageRequest.of(page,pageSize);
+        return repository.findAll(specs, pageRequest);
     }
 
+    public void saveIncident(Incident incident) {
+        repository.save(incident);
+    }
 }
