@@ -12,6 +12,7 @@ import com.appiainformatica.backend.model.enums.Priority;
 import com.appiainformatica.backend.model.enums.Status;
 import com.appiainformatica.backend.service.CommentService;
 import com.appiainformatica.backend.service.IncidentService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +60,7 @@ public class IncidentController {
     }
 
     @PostMapping
-    public ResponseEntity<IncidentResponseDTO> saveIncident(@RequestBody IncidentRequestDTO incidentRequestDTO) {
+    public ResponseEntity<IncidentResponseDTO> saveIncident(@RequestBody @Valid IncidentRequestDTO incidentRequestDTO) {
         Incident entitySaved = incidentMapper.toEntity(incidentRequestDTO);
         incidentService.saveIncident(entitySaved);
 
@@ -68,7 +69,7 @@ public class IncidentController {
 
     @PutMapping("/{id}")
     public ResponseEntity<IncidentResponseDTO> updatedIncident(@PathVariable("id") UUID id,
-                                                               @RequestBody IncidentRequestDTO incidentRequestDTO) {
+                                                               @RequestBody @Valid IncidentRequestDTO incidentRequestDTO) {
         Incident entityUpdated = incidentMapper.toEntity(incidentRequestDTO);
         Incident updated = incidentService.updateIncident(id, entityUpdated);
 
@@ -83,7 +84,7 @@ public class IncidentController {
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<IncidentResponseDTO> updateStatus(@PathVariable("id") UUID id,
-                                                            @RequestBody IncidentRequestDTO incidentRequestDTO) {
+                                                            @RequestBody @Valid IncidentRequestDTO incidentRequestDTO) {
         Incident entityUpdated = incidentMapper.toEntity(incidentRequestDTO);
         Incident updated = incidentService.updateStatus(id, entityUpdated);
 
@@ -92,7 +93,7 @@ public class IncidentController {
 
     @PostMapping("/{id}/comments")
     public ResponseEntity<CommentResponseDTO> saveComment(@PathVariable("id") UUID id,
-                                               @RequestBody CommentRequestDTO commentRequestDTO) {
+                                               @RequestBody @Valid CommentRequestDTO commentRequestDTO) {
         Comment commentSaved = commentMapper.toEntity(commentRequestDTO);
         Comment saved = commentService.saveComment(commentSaved, id);
 
