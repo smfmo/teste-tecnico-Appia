@@ -104,5 +104,20 @@ public class IncidentService {
         return repository.save(existingIncident);
     }
 
+    public Map<String, Long> getStatsByStatus() {
+        return countByEnum(Status.values(), repository::countByStatus);
+    }
+
+    public Map<String, Long> getStatsByPriority() {
+        return countByEnum(Priority.values(), repository::countByPriority);
+    }
+
+    private <E extends Enum<E>> Map<String, Long> countByEnum(E[] values, Function<E, Long> counter) {
+        Map<String, Long> result = new HashMap<>();
+        for (E value : values) {
+            result.put(value.name(), counter.apply(value));
+        }
+        return result;
+    }
 
 }
