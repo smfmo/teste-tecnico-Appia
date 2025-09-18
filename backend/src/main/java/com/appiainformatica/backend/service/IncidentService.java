@@ -11,8 +11,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
+
 import static com.appiainformatica.backend.repository.specs.IncidentSpecs.*;
 
 @Service
@@ -70,4 +75,34 @@ public class IncidentService {
     public Optional<Incident> getIncidentById(UUID id) {
         return repository.findById(id);
     }
+
+    public Incident updateIncident(UUID id, Incident updatedIncident) {
+        return getIncidentById(id)
+                .map(existingIncident -> {
+                            existingIncident.setTitle(updatedIncident.getTitle());
+                            existingIncident.setDescription(updatedIncident.getDescription());
+                            existingIncident.setPriority(updatedIncident.getPriority());
+                            existingIncident.setStatus(updatedIncident.getStatus());
+                            existingIncident.setResponsibleEmail(updatedIncident.getResponsibleEmail());
+                            existingIncident.setTags(updatedIncident.getTags());
+                            return repository.save(existingIncident);
+                        }
+                ).orElseThrow(() -> new EntityNotFoundException("Incident not found with id " + id));
+    }
+
+    public void deleteIncident(UUID id) {
+        repository.deleteById(id);
+    }
+
+    public Incident updateStatus(UUID id, Incident incident) {
+        Incident existingIncident = getIncidentById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Incident not found with id " + id));
+
+        if (incident.getStatus() != null) {
+            existingIncident.setStatus(incident.getStatus());
+        }
+        return repository.save(existingIncident);
+    }
+
+
 }
