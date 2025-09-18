@@ -10,7 +10,6 @@ import com.appiainformatica.backend.service.IncidentService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,9 +38,10 @@ public class IncidentController {
             @RequestParam(value = "priority", required = false) Priority priority,
             @RequestParam(value = "q", required = false) String q,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "page-size", defaultValue = "10") Integer pageSize) {
+            @RequestParam(value = "page-size", defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "sort", required = false) String sort) {
 
-        Page<Incident> pageResponse = service.getIncidentsPerFilter(status, priority, q, page, pageSize);
+        Page<Incident> pageResponse = service.getIncidentsPerFilter(status, priority, q, page, pageSize, sort);
         Page<IncidentResponseDTO> result = pageResponse.map(mapper::toDto);
         return ResponseEntity.ok(result);
     }
