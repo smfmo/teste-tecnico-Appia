@@ -58,4 +58,52 @@ public class IncidentController {
         return ResponseEntity.ok(result);
     }
 
+    @PostMapping
+    public ResponseEntity<IncidentResponseDTO> saveIncident(@RequestBody IncidentRequestDTO incidentRequestDTO) {
+        Incident entitySaved = incidentMapper.toEntity(incidentRequestDTO);
+        incidentService.saveIncident(entitySaved);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(incidentMapper.toDto(entitySaved));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<IncidentResponseDTO> updatedIncident(@PathVariable("id") UUID id,
+                                                               @RequestBody IncidentRequestDTO incidentRequestDTO) {
+        Incident entityUpdated = incidentMapper.toEntity(incidentRequestDTO);
+        Incident updated = incidentService.updateIncident(id, entityUpdated);
+
+        return ResponseEntity.ok(incidentMapper.toDto(updated));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Incident> deleteIncident(@PathVariable("id") UUID id) {
+        incidentService.deleteIncident(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<IncidentResponseDTO> updateStatus(@PathVariable("id") UUID id,
+                                                            @RequestBody IncidentRequestDTO incidentRequestDTO) {
+        Incident entityUpdated = incidentMapper.toEntity(incidentRequestDTO);
+        Incident updated = incidentService.updateStatus(id, entityUpdated);
+
+        return ResponseEntity.ok(incidentMapper.toDto(updated));
+    }
+
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<CommentResponseDTO> saveComment(@PathVariable("id") UUID id,
+                                               @RequestBody CommentRequestDTO commentRequestDTO) {
+        Comment commentSaved = commentMapper.toEntity(commentRequestDTO);
+        Comment saved = commentService.saveComment(commentSaved, id);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentMapper.toDto(saved));
+    }
+
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<List<CommentResponseDTO>> getCommentsByIncident(@PathVariable("id") UUID incidentId) {
+        List<Comment> comments = commentService.getCommentsByIncident(incidentId);
+        List<CommentResponseDTO> listResponse = comments.stream().map(commentMapper::toDto).toList();
+
+        return ResponseEntity.ok(listResponse);
+    }
 }
